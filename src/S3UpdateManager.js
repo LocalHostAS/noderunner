@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var knox = require('knox');
+var s3 = require('s3');
 var moment = require('moment');
 var Zip = require('adm-zip');
 
@@ -15,6 +16,7 @@ var S3UpdateManager = function(workingDir, s3Bucket,s3Path, s3Key, s3Secret, pol
 	   	secret: s3Secret,
 	   	bucket: s3Bucket
 	});
+	this.s3Download = s3.fromKnox(this.s3Client);
 }
 
 S3UpdateManager.prototype.getLatestVersion = function(cb) {
@@ -44,25 +46,17 @@ S3UpdateManager.prototype.getLatestVersion = function(cb) {
 			}
 			
 			// Download file
-			self.s3Client.getFile(self.s3Path, function(err, res){
-				if (err)
-				{
-					self.busy = false;
-					return cb(err);
-				}
-				
-				// Store archive
-				var out = fs.createWriteStream(archiveName);
-				res.pipe(out);
-		
-				// Unpack and delete archive
-				res.on('end', function(){
-					var zip = new Zip(archiveName);
-					zip.extractAllTo(dirName, true);
-					fs.unlinkSync(archiveName);
-					self.busy = false;
-					return cb(null,dirName);
-				});
+			var downloader = self.s3Download.download(self.s3Path, archiveName);
+			downloader.on('error', function(err) {
+				self.busy = false;
+				return cb(err);
+			});
+			downloader.on('end', function() {
+				var zip = new Zip(archiveName);
+				zip.extractAllTo(dirName, true);
+				fs.unlinkSync(archiveName);
+				self.busy = false;
+				return cb(null,dirName);
 			});
 		});
 	}

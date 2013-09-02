@@ -17,7 +17,8 @@
     "moment": "~2.1.0",
     "underscore": "~1.5.1",
     "knox": "~0.8.6",
-    "rimraf": "~2.2.2"
+    "rimraf": "~2.2.2",
+    "s3": "~0.3.1"
   },
   "devDependencies": {
     "mocha": "*",
