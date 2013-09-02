@@ -42,7 +42,11 @@ module.exports = {
 			currentProcess = spawn(startCommand,startArgs,{cwd: dirName});
 			currentProcess.path = dirName;
 			
-			if (oldDir) rmdir(oldDir, function(err){ });
+			if (oldDir){
+				setTimeout(function(){
+					rmdir(oldDir, function(err){ });
+				},10000);
+			}
 		}
 		
 		// Set initial busy state		
