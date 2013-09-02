@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var noderunner = require('../src/noderunner');
+
+/* 
+ * Function for parsing command line arguments and starting noderunner instance
+ */
+var cli = function(args)
+{
+	// Parse command line arguments
+	program
+	  .version('0.0.1')
+	  .option('-b, --bucket <bucket>', 'specify the s3 bucket')
+	  .option('-p, --path <path>', 'specify the S3 file path')
+	  .option('-k, --key <key>', 'the S3 key to use')
+	  .option('-s, --secret <secret>', 'the S3 secret')
+	  .option('-n, --name <name>', 'optional app name')
+	  .parse(args);
+
+	  if (!program.bucket || !program.path || !program.key || !program.secret){
+		  if (require.main === module)
+		  {
+			  program.help();
+			  process.exit(1);
+		  }
+		  else
+		  {
+			  throw program.help();
+		  }
+	  };
+	  noderunner.start(program.bucket, program.path, program.key, program.secret, program.name);
+};
+
+// Export cli if required as module, otherwise call cli with process args
+if (require.main === module){
+	cli(process.argv, true);
+} 
+else module.exports = function(args){ 
+	args = args.split(' ');
+	args.unshift('noderunner');
+	args.unshift('node');
+	cli(args);
+};
+
+
+
+
+
+
+
+
+
+
+
+

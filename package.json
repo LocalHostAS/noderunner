@@ -1,0 +1,27 @@
+{
+  "name": "noderunner-js",
+  "description": "Simple runner of nodes, sporting automatic updates.",
+  "version": "0.1.0",
+  "author": "LocalHost <mail@local-host.no>",
+  "bin": {
+    "noderunner": "./bin/noderunner-cli"
+  },
+  "config": {},
+  "scripts": {
+    "start": "node noderunner.js",
+    "test": "node_modules/.bin/mocha -R spec spec"
+  },
+  "dependencies": {
+    "commander": "2.0.0",
+    "adm-zip": "~0.4.3",
+    "moment": "~2.1.0",
+    "underscore": "~1.5.1",
+    "knox": "~0.8.6",
+    "rimraf": "~2.2.2"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "rewire": "*",
+    "sinon": "*"
+  }
+}
