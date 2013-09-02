@@ -1,5 +1,5 @@
 {
-  "name": "noderunner-js",
+  "name": "noderunner",
   "description": "Simple runner of nodes, sporting automatic updates.",
   "version": "0.1.0",
   "author": "LocalHost <mail@local-host.no>",
