@@ -42,11 +42,11 @@ module.exports = {
 			var oldDir = (currentProcess || {}).path;
 			currentProcess = spawn(startCommand,startArgs,{cwd: dirName});
 			currentProcess.path = dirName;
-			ls.stdout.on('data', function (data) {
+			currentProcess.stdout.on('data', function (data) {
 			  console.log('stdout: ' + data);
 			});
 
-			ls.stderr.on('data', function (data) {
+			currentProcess.stderr.on('data', function (data) {
 			  console.log('stderr: ' + data);
 			});
 			if (oldDir) rmdir(oldDir, function(err){ 
