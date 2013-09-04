@@ -49,7 +49,7 @@ module.exports = {
 			currentProcess.stderr.on('data', function (data) {
 			  console.log('stderr: ' + data);
 			});
-			if (oldDir) rmdir(oldDir, function(err){ 
+			if (oldDir && oldDir != dirName) rmdir(oldDir, function(err){ 
 				console.log('FAILED to delete folder ' + oldDir);
 			});
 		}
