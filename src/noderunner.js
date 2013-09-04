@@ -39,10 +39,11 @@ module.exports = {
 			}
 			
 			var oldDir = (currentProcess || {}).path;
-			currentProcess = spawn(startCommand,startArgs,{cwd: dirName});
+			var currentProcess = spawn(startCommand,startArgs,{cwd: dirName});
 			currentProcess.path = dirName;
-			
-			if (oldDir) rmdir(oldDir, function(err){ });
+			if (oldDir) rmdir(oldDir, function(err){ 
+				console.log('FAILED to delete folder ' + oldDir);
+			});
 		}
 		
 		// Set initial busy state		
@@ -50,30 +51,49 @@ module.exports = {
 			
 		// Retrieve latest version
 		updateManager.getLatestVersion(function(err,dirName){
-			if (err || busy) return;
+			if (err) {
+				console.log('Update check FAILED.');
+				return;
+			} 
+			if (busy) {
+				console.log('Busy, ignoring update message.');
+				return;
+			}
+			
 			busy = true;
 						
 			// Stop current process and start new
-			if (currentProcess && !currentProcess.killed) 
+			if (currentProcess) 
 			{
-				if (currentProcess.path == dirName)
+				if (currentProcess.path == dirName && currentProcess.exitCode === null)
 				{
+					console.log('Running the latest version available.');
 					busy = false;
 					return;
 				}
+				else if (currentProcess.path == dirName)
+				{
+					console.log('Process has STOPPED, trying to restart');
+					busy = false;
+					start(dirName);
+				}
 				else
 				{
-					currentProcess.on('exit', function(){
-						start(dirName);
+					currentProcess.on('exit', function(code){
+						console.log('Child process exited with code ' + code);
 						busy = false;
+						start(dirName);
 					});
-					currentProcess.kill('SIGTERM');
+
+					console.log('New version available, killing running process...');
+					currentProcess.kill('SIGKILL');
 				}
 			}
 			else
 			{
-				start(dirName);
+				console.log('No running process, starting..');
 				busy = false;
+				start(dirName);
 			}
 		});
 	}
