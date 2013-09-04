@@ -49,9 +49,14 @@ module.exports = {
 			currentProcess.stderr.on('data', function (data) {
 			  console.log('stderr: ' + data);
 			});
-			if (oldDir && oldDir != dirName) rmdir(oldDir, function(err){ 
-				console.log('FAILED to delete folder ' + oldDir);
-			});
+			if (oldDir && oldDir != dirName) {
+				setTimeout(function(){
+					rmdir(oldDir, function(err){ 
+									if (err) console.log('FAILED to delete folder ' + oldDir);
+									else console.log('Deleted folder ' + oldDir);
+								});
+				},10*1000);
+			};
 		}
 		
 		// Set initial busy state		
