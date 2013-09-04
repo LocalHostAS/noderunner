@@ -4,6 +4,7 @@ var path = require('path');
 var spawn = require('child_process').spawn;
 var crypto = require('crypto');
 var rmdir = require('rimraf');
+var _ = require('underscore');
 var S3UpdateManager = require('./S3UpdateManager');
 
 var tmpDirName = 'noderunner';
@@ -39,8 +40,15 @@ module.exports = {
 			}
 			
 			var oldDir = (currentProcess || {}).path;
-			var currentProcess = spawn(startCommand,startArgs,{cwd: dirName});
+			currentProcess = spawn(startCommand,startArgs,{cwd: dirName});
 			currentProcess.path = dirName;
+			ls.stdout.on('data', function (data) {
+			  console.log('stdout: ' + data);
+			});
+
+			ls.stderr.on('data', function (data) {
+			  console.log('stderr: ' + data);
+			});
 			if (oldDir) rmdir(oldDir, function(err){ 
 				console.log('FAILED to delete folder ' + oldDir);
 			});
@@ -67,7 +75,7 @@ module.exports = {
 			{
 				if (currentProcess.path == dirName && currentProcess.exitCode === null)
 				{
-					console.log('Running the latest version available.');
+					console.log('Running the latest version available ('+ _.last(dirName.split('/')) +').');
 					busy = false;
 					return;
 				}
@@ -85,13 +93,13 @@ module.exports = {
 						start(dirName);
 					});
 
-					console.log('New version available, killing running process...');
+					console.log('New version available ('+  _.last(dirName.split('/')) +'), killing running process...');
 					currentProcess.kill('SIGKILL');
 				}
 			}
 			else
 			{
-				console.log('No running process, starting..');
+				console.log('No running process, starting ('+  _.last(dirName.split('/')) +')..');
 				busy = false;
 				start(dirName);
 			}
