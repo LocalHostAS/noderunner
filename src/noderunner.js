@@ -80,7 +80,6 @@ module.exports = {
 			{
 				if (currentProcess.path == dirName && currentProcess.exitCode === null)
 				{
-					console.log('Running the latest version available ('+ _.last(dirName.split('/')) +').');
 					busy = false;
 					return;
 				}
@@ -92,14 +91,23 @@ module.exports = {
 				}
 				else
 				{
-					currentProcess.on('exit', function(code){
-						console.log('Child process exited with code ' + code);
+					if (currentProcess.exitCode === null)
+					{
+						currentProcess.on('exit', function(code){
+							console.log('Child process exited with code ' + code);
+							busy = false;
+							start(dirName);
+						});
+
+						console.log('New version available ('+  _.last(dirName.split('/')) +'), killing running process...');
+						currentProcess.kill('SIGKILL');
+					}
+					else
+					{
+						console.log('Process has STOPPED, new version available (bugfix), trying to restart');
 						busy = false;
 						start(dirName);
-					});
-
-					console.log('New version available ('+  _.last(dirName.split('/')) +'), killing running process...');
-					currentProcess.kill('SIGKILL');
+					}
 				}
 			}
 			else
