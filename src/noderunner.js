@@ -10,7 +10,7 @@ var S3UpdateManager = require('./S3UpdateManager');
 var tmpDirName = 'noderunner';
 var startCommand = 'node';
 var startArgs = ['server.js'];
-var pollingInterval = 10000;
+var pollingInterval = 60 * 1000;
 
 module.exports = {
 	start: function(s3Bucket,s3Path, s3Key, s3Secret,appName) {

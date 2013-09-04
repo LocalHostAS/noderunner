@@ -27,7 +27,6 @@ S3UpdateManager.prototype.getLatestVersion = function(cb) {
 		self.busy = true;
 		
 		// Poll file info
-		console.log(self.s3Path);
 		self.s3Client.headFile(self.s3Path, function(err, res){		
 			if (err) 
 			{
