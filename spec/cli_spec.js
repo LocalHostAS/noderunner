@@ -3,7 +3,7 @@ var rewire = require('rewire');
 var sinon = require('sinon');
 
 describe('cli',function(){		
-	it('should return with exit code 1 if incorrect parameters are passed', function(done){
+	it('should return with exit code 1 if invalid parameters', function(done){
 		var spawn = require('child_process').spawn;
 		var program = spawn('bin/noderunner-js','-p something'.split(' '));
 		program.on('exit',function(code) {
@@ -14,15 +14,15 @@ describe('cli',function(){
 	
 	it('should start noderunner with supplied parameters if valid', function(){
 		
-		var cli = rewire('../bin/noderunner-js');
+		var cli = rewire('../bin/noderunner-cli');
 		var startSpy = sinon.spy();
 		
 		cli.__set__("noderunner", {
 			start: startSpy
 		});
 		
-		cli('-p some/path -s someSecret -k someKey');
+		cli('-b bucket -p some/path -k someKey -s someSecret -n name');
 		
-		assert(startSpy.calledWith('some/path', 'someKey', 'someSecret'));
+		assert(startSpy.calledWith('bucket', 'some/path', 'someKey', 'someSecret', 'name'));
 	});
 });
