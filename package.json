@@ -2,6 +2,7 @@
   "name": "noderunner",
   "description": "Simple runner of nodes, sporting automatic updates.",
   "version": "0.1.0",
+  "repository": "https://github.com/LocalHostAS/noderunner",
   "author": "LocalHost <mail@local-host.no>",
   "bin": {
     "noderunner": "./bin/noderunner-cli"
@@ -24,5 +25,10 @@
     "mocha": "*",
     "rewire": "*",
     "sinon": "*"
+  },
+  
+  "engines" : 
+  { 
+	  "node" : ">=0.6 <0.11" 
   }
 }
