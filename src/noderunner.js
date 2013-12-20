@@ -7,24 +7,28 @@ var rmdir = require('rimraf');
 var _ = require('underscore');
 var S3UpdateManager = require('./S3UpdateManager');
 
-var tmpDirName = 'noderunner';
+var tmpdirName = 'noderunner';
 var startCommand = 'node';
 var startArgs = ['server.js'];
 var pollingInterval = 60 * 1000;
 
 module.exports = {
-	start: function(s3Bucket,s3Path, s3Key, s3Secret,appName) {
-
-		// Determine directory names
-		var tmpDir = path.join(os.tmpDir(),tmpDirName);
-		var subDir = path.join(tmpDir, appName || crypto.createHash('md5').update(s3Path).digest("hex"));
+	start: function(opts) {
 		
-		var updateManager = new S3UpdateManager(subDir,s3Bucket,s3Path, s3Key, s3Secret, pollingInterval);
-		var currentProcess = null;
+		if (!opts) throw "Invalid options: cannot be null/undefined";
 				
+		// Determine directory names
+		var tmpDir = path.join(os.tmpDir(),tmpdirName);
+		var subDir = path.join(tmpDir, opts.name || crypto.createHash('md5').update(s3Path).digest("hex"));
+						
 		// Create directories as needed
 		if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);
 		if (!fs.existsSync(subDir)) fs.mkdirSync(subDir);
+		
+				return;
+		
+		var updateManager = new S3UpdateManager(subDir,s3Bucket,s3Path, s3Key, s3Secret, pollingInterval);
+		var currentProcess = null;
 	
 		// Function for spawning a new version
 		var start = function(dirName){

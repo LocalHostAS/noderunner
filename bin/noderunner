@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+
+var optimist = require('optimist');
+var noderunner = require('../src/noderunner');
+
+/* 
+ * Function for parsing command line arguments and starting noderunner instance
+ */
+var cli = function(args, fromShell)
+{
+	var runnerOpts = optimist()
+		.demand(['name', 'source'])
+		.parse(args);
+		
+	if (runnerOpts.source == 's3')
+	{
+		runnerOpts = optimist()
+			.demand(['bucket', 'path', 'key','secret'])
+			.parse(args);
+	}
+	else if (runnerOpts.source == 'ftp')
+	{
+		runnerOpts = optimist()
+			.demand(['host', 'username', 'password','path'])
+			.parse(args);
+	}
+	else
+	{
+		runnerOpts.showHelp();
+		process.exit(1);
+	}
+
+	noderunner.start(runnerOpts);
+};
+
+
+// Export cli if required as module, otherwise call cli with process args
+if (require.main === module){
+	cli(process.argv, true);
+} 
+else
+{
+    module.exports = function(args){ 
+   		args = args.split(' ');
+   		cli(args,false);
+   	};
+}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
