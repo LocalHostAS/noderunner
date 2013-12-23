@@ -2,6 +2,7 @@
 
 var optimist = require('optimist');
 var noderunner = require('../src/noderunner');
+var S3UpdateManager = require('../src/S3UpdateManager');
 
 /* 
  * Function for parsing command line arguments and starting noderunner instance
@@ -11,12 +12,16 @@ var cli = function(args, fromShell)
 	var runnerOpts = optimist()
 		.demand(['name', 'source'])
 		.parse(args);
+
 		
+	var updateManager;
 	if (runnerOpts.source == 's3')
 	{
 		runnerOpts = optimist()
 			.demand(['bucket', 'path', 'key','secret'])
 			.parse(args);
+			
+		updateManager = new S3UpdateManager(runnerOpts);	
 	}
 	else if (runnerOpts.source == 'ftp')
 	{
@@ -29,8 +34,8 @@ var cli = function(args, fromShell)
 		runnerOpts.showHelp();
 		process.exit(1);
 	}
-
-	noderunner.start(runnerOpts);
+	
+	noderunner.start(runnerOpts.name, updateManager);
 };
 
 

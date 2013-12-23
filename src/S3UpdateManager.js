@@ -5,16 +5,21 @@ var s3 = require('s3');
 var moment = require('moment');
 var Zip = require('adm-zip');
 
-var S3UpdateManager = function(workingDir, s3Bucket,s3Path, s3Key, s3Secret, pollingInterval)
+var S3UpdateManager = function(options)
 {
-	this.pollingInterval = pollingInterval;
-	this.workingDir = workingDir;
+	if (!options.bucket || !options.path || !options.key || !options.secret)
+	{
+		throw "Options must include bucket, path, key, and secret";
+	}
+	
+	this.pollingInterval = options.pollingInterval || 60000;
+//	this.workingDir = workingDir;
 	this.busy = false;
-	this.s3Path = s3Path;
+	this.s3Path = options.path;
 	this.s3Client = knox.createClient({
-	    key: s3Key,
-	   	secret: s3Secret,
-	   	bucket: s3Bucket
+	    key: options.key,
+	   	secret: options.secret,
+	   	bucket: options.bucket
 	});
 	this.s3Download = s3.fromKnox(this.s3Client);
 }
