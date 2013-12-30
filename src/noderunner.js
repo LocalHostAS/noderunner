@@ -1,3 +1,4 @@
+var require = require;
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
@@ -32,7 +33,21 @@ Noderunner.prototype.start = function() {
 	if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir);
 	if (!fs.existsSync(subDir)) fs.mkdirSync(subDir);
 	
-			return;
+	self.updateManager.on('newVersionAvailable', function(versionPath){
+		
+		// Read package.json
+		fs.readFile(path.join(versionPath,'package.json'), function(err,data){
+			console.log(data);
+			if (err) return err;
+			
+			var pkg = JSON.parse(data);
+			
+		});
+		
+		
+	});
+	
+	return;
 	
 	var updateManager = new S3UpdateManager(subDir,s3Bucket,s3Path, s3Key, s3Secret, pollingInterval);
 	var currentProcess = null;
